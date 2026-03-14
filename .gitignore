@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment variables (NEVER commit secrets)
+.env
+.env.*
+
+# ML artifacts (large files – use DVC or store in CI artifacts)
+models/*.joblib
+models/metadata_*.json
+# Keep metadata_latest so the API can boot without training
+!models/metadata.json
+!models/metadata_latest.json
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data (raw data may be large; use DVC for versioning)
+data/processed/
+data/synthetic/
+
+# Reports / figures
+reports/figures/*.png
+
+# Testing
+.coverage
+coverage.xml
+.pytest_cache/
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

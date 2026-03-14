@@ -1,0 +1,35 @@
+# render.yaml – Deployment manifest for Render.com
+# Documentation: https://render.com/docs/blueprint-spec
+#
+# Deploy both the FastAPI backend and the Streamlit frontend.
+# Required environment variables (set in Render dashboard or via secrets):
+#   RENDER_DEPLOY_HOOK_URL  – auto-deploy webhook (for CI/CD)
+
+services:
+  # ── FastAPI Prediction API ───────────────────────────────────────────────
+  - type: web
+    name: churn-prediction-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free               # change to 'starter' for always-on
+    region: frankfurt        # closest to Spain
+    branch: main
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: LOG_LEVEL
+        value: info
+
+  # ── Streamlit Frontend ───────────────────────────────────────────────────
+  - type: web
+    name: churn-prediction-streamlit
+    runtime: python
+    plan: free
+    region: frankfurt
+    branch: main
+    buildCommand: "pip install -r requirements.txt && python train.py"
+    startCommand: "streamlit run streamlit_app.py --server.port $PORT --server.address 0.0.0.0"
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
