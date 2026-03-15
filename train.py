@@ -9,7 +9,6 @@ Trains a churn prediction model with:
 - Artifacts saved to models/
 """
 
-import os
 import json
 import logging
 import warnings
@@ -39,9 +38,7 @@ from sklearn.metrics import (
     average_precision_score,
     brier_score_loss,
     log_loss,
-    classification_report,
 )
-from sklearn.dummy import DummyClassifier
 
 warnings.filterwarnings("ignore")
 
@@ -212,7 +209,6 @@ def find_optimal_threshold(y_true, y_proba, min_recall: float = 0.70) -> float:
 
 def evaluate(model_name, model, X_test, y_test, threshold: float) -> dict:
     """Compute all evaluation metrics for a fitted (calibrated) model."""
-    from sklearn.calibration import calibration_curve
     import numpy as np
 
     y_proba = model.predict_proba(X_test)[:, 1]

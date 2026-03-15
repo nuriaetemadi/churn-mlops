@@ -5,11 +5,8 @@ Run with: pytest tests/ -v --cov=. --cov-report=term-missing
 
 import io
 import json
-import os
 import sys
-import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
@@ -236,7 +233,6 @@ class TestFastAPI:
 
     def _get_client(self, mock_artifacts):
         """Patch MODELS_DIR and reload app."""
-        import importlib
         import app as app_module
 
         original_dir = app_module.MODELS_DIR

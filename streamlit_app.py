@@ -7,7 +7,6 @@ Features:
   2. CSV upload  – batch predictions with filtering and download
 """
 
-import io
 import json
 from pathlib import Path
 
@@ -118,7 +117,7 @@ with st.sidebar:
     st.divider()
 
     if MODEL_LOADED:
-        st.success(f"✅ Model loaded")
+        st.success("✅ Model loaded")
         st.caption(f"**Algorithm:** {METADATA.get('model_name', '–')}")
         st.caption(f"**Calibration:** {METADATA.get('calibration_method', '–')}")
         st.caption(f"**Threshold:** {THRESHOLD}")
@@ -206,10 +205,10 @@ if tab_choice == "🧑 Single Customer":
         with res_col2:
             st.markdown("### Prediction Result")
             if churn:
-                st.error(f"## ⚠️ CHURN PREDICTED")
+                st.error("## ⚠️ CHURN PREDICTED")
                 st.markdown(f"This customer is **likely to churn** with **{prob*100:.1f}%** probability.")
             else:
-                st.success(f"## ✅ NO CHURN PREDICTED")
+                st.success("## ✅ NO CHURN PREDICTED")
                 st.markdown(f"This customer is **likely to stay** (churn prob: **{prob*100:.1f}%**).")
 
             st.metric("Churn Probability", f"{prob*100:.1f}%")
