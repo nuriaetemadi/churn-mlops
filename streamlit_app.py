@@ -124,6 +124,17 @@ with st.sidebar:
         m = METADATA.get("metrics", {})
         st.caption(f"**ROC-AUC:** {m.get('roc_auc', '–'):.4f}" if m else "")
         st.caption(f"**Brier Score:** {m.get('brier_score', '–'):.4f}" if m else "")
+        st.divider()
+        st.subheader("⚙️ Threshold Tuning")
+        THRESHOLD = st.slider(
+            "Classification Threshold",
+            min_value=0.10,
+            max_value=0.90,
+            value=float(METADATA.get("optimal_threshold", 0.295)),
+            step=0.005,
+            help="Lower = catch more churners (higher recall). Higher = more conservative (lower recall)."
+        )
+        st.caption(f"Default (optimised): {METADATA.get('optimal_threshold', 0.295)}")
 
     st.divider()
     tab_choice = st.radio("Mode", ["🧑 Single Customer", "📂 CSV Batch Prediction"])
