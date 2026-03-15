@@ -1,36 +1,8 @@
 {
-  "timestamp": "20260313_205229",
+  "timestamp": "20260315_104505",
   "model_name": "GradientBoosting",
-  "model_params": {
-    "n_estimators": 300,
-    "max_depth": 3,
-    "learning_rate": 0.03,
-    "subsample": 0.8,
-    "min_samples_leaf": 15
-  },
   "calibration_method": "isotonic",
   "optimal_threshold": 0.295,
-  "feature_columns": [
-    "tenure",
-    "MonthlyCharges",
-    "TotalCharges",
-    "gender",
-    "Partner",
-    "Dependents",
-    "PhoneService",
-    "PaperlessBilling",
-    "MultipleLines",
-    "InternetService",
-    "OnlineSecurity",
-    "OnlineBackup",
-    "DeviceProtection",
-    "TechSupport",
-    "StreamingTV",
-    "StreamingMovies",
-    "Contract",
-    "PaymentMethod",
-    "SeniorCitizen"
-  ],
   "feature_names": [
     "tenure",
     "MonthlyCharges",
@@ -78,6 +50,27 @@
     "PaymentMethod_Mailed check",
     "SeniorCitizen"
   ],
+  "feature_columns": [
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges",
+    "gender",
+    "Partner",
+    "Dependents",
+    "PhoneService",
+    "PaperlessBilling",
+    "MultipleLines",
+    "InternetService",
+    "OnlineSecurity",
+    "OnlineBackup",
+    "DeviceProtection",
+    "TechSupport",
+    "StreamingTV",
+    "StreamingMovies",
+    "Contract",
+    "PaymentMethod",
+    "SeniorCitizen"
+  ],
   "numeric_features": [
     "tenure",
     "MonthlyCharges",
@@ -106,15 +99,15 @@
     "SeniorCitizen"
   ],
   "metrics": {
-    "roc_auc": 0.8456160066134489,
-    "pr_auc": 0.6633064631877039,
+    "roc_auc": 0.8456108398563641,
+    "pr_auc": 0.6633053366411163,
+    "brier_score": 0.13514421430633147,
+    "mean_calibration_error": 0.04259244557681043,
+    "log_loss": 0.41562886674726524,
     "recall": 0.7727272727272727,
     "precision": 0.544256120527307,
     "f1": 0.6386740331491713,
-    "brier_score": 0.13514367726187743,
-    "mean_calibration_error": 0.042592955237995105,
-    "cv_roc_auc_mean": 0.8500996214534225,
-    "cv_roc_auc_std": 0.011386070056943271
+    "threshold": 0.295
   },
   "training_samples": 5634,
   "test_samples": 1409,

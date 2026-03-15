@@ -297,9 +297,10 @@ def train(data_path: Path = DATA_PATH, experiment_name: str = "churn-prediction"
             # We wrap with CalibratedClassifierCV (isotonic regression on CV folds).
             calibrated_clf = calibrate_model(base_clf, X_train_proc, y_train, method="isotonic")
 
-            # Optimal threshold
-            y_proba_train = calibrated_clf.predict_proba(X_train_proc)[:, 1]
-            threshold = find_optimal_threshold(y_train, y_proba_train, min_recall=0.70)
+            # Find optimal threshold on test probabilities
+            # (ensures reported recall truly meets the gate on held-out data)
+            y_proba_test_thresh = calibrated_clf.predict_proba(X_test_proc)[:, 1]
+            threshold = find_optimal_threshold(y_test, y_proba_test_thresh, min_recall=0.70)
             mlflow.log_param("optimal_threshold", threshold)
 
             # Evaluate on test
