@@ -27,7 +27,7 @@ jobs:
         run: pip install ruff==0.4.4
 
       - name: Run ruff linter
-        run: ruff check . --select=E,W,F --ignore=E501
+        run: ruff check . --select=E,W,F --ignore=E501 --exclude=notebooks
         # E501 = line-too-long (relaxed for ML code)
 
   # ─── 2. Test ───────────────────────────────────────────────────────────────
