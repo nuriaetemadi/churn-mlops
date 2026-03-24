@@ -13,6 +13,7 @@ import io
 import json
 import logging
 from pathlib import Path
+from typing import Optional
 
 import joblib
 import numpy as np
@@ -138,25 +139,28 @@ def _check_model():
         raise HTTPException(status_code=503, detail="Model not loaded. Run train.py first.")
 
 
-def _risk_label(prob: float) -> str:
-    if prob < 0.30:
+def _risk_label(prob: float, threshold: float = None) -> str:
+    """Risk label scales with the current threshold."""
+    t = threshold if threshold is not None else THRESHOLD
+    if prob < t * 0.6:
         return "Low"
-    elif prob < 0.60:
+    elif prob < t:
         return "Medium"
     return "High"
 
 
-def _predict_df(df: pd.DataFrame) -> pd.DataFrame:
+def _predict_df(df: pd.DataFrame, threshold: float = None) -> pd.DataFrame:
     """Run preprocessor + model on a DataFrame of customer features."""
+    t = threshold if threshold is not None else THRESHOLD
     X = PREPROCESSOR.transform(df[FEATURE_COLUMNS])
     probas = MODEL.predict_proba(X)
     churn_prob = probas[:, 1]
-    churn_pred = (churn_prob >= THRESHOLD).astype(int)
+    churn_pred = (churn_prob >= t).astype(int)
     return pd.DataFrame({
         "churn": churn_pred.astype(bool),
         "churn_probability": np.round(churn_prob, 4),
         "no_churn_probability": np.round(1 - churn_prob, 4),
-        "risk_label": [_risk_label(p) for p in churn_prob],
+        "risk_label": [_risk_label(p, t) for p in churn_prob],
     })
 
 
@@ -185,17 +189,24 @@ def model_info():
 
 
 @app.post("/predict", response_model=PredictionResult, tags=["Prediction"])
-def predict_single(customer: CustomerFeatures):
-    """Predict churn for a single customer."""
+def predict_single(customer: CustomerFeatures, threshold: float = None):
+    """
+    Predict churn for a single customer.
+    Pass ?threshold=0.35 to override the default optimised threshold.
+    Lower = higher recall. Higher = higher precision.
+    """
     _check_model()
+    t = threshold if threshold is not None else THRESHOLD
+    if not 0.0 < t < 1.0:
+        raise HTTPException(status_code=422, detail="threshold must be between 0 and 1")
     try:
         df = pd.DataFrame([customer.dict()])
-        result = _predict_df(df).iloc[0]
+        result = _predict_df(df, threshold=t).iloc[0]
         return PredictionResult(
             churn=bool(result["churn"]),
             churn_probability=float(result["churn_probability"]),
             no_churn_probability=float(result["no_churn_probability"]),
-            threshold_used=THRESHOLD,
+            threshold_used=t,
             risk_label=result["risk_label"],
         )
     except Exception as e:
@@ -204,12 +215,16 @@ def predict_single(customer: CustomerFeatures):
 
 
 @app.post("/predict/batch", response_model=BatchPredictionResult, tags=["Prediction"])
-async def predict_batch(file: UploadFile = File(...)):
+async def predict_batch(file: UploadFile = File(...), threshold: float = None):
     """
     Upload a CSV file with customer data and get churn predictions for all rows.
-    The CSV may optionally include a 'customerID' column.
+    The CSV may optionally include a customerID column.
+    Pass ?threshold=0.35 to override the default optimised threshold.
     """
     _check_model()
+    t = threshold if threshold is not None else THRESHOLD
+    if not 0.0 < t < 1.0:
+        raise HTTPException(status_code=422, detail="threshold must be between 0 and 1")
     try:
         contents = await file.read()
         df = pd.read_csv(io.BytesIO(contents))
@@ -225,7 +240,7 @@ async def predict_batch(file: UploadFile = File(...)):
     df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce").fillna(0.0)
 
     try:
-        preds = _predict_df(df)
+        preds = _predict_df(df, threshold=t)
     except Exception as e:
         logger.exception("Batch prediction failed")
         raise HTTPException(status_code=500, detail=str(e))
