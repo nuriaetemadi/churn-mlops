@@ -6,6 +6,16 @@ An end-to-end MLOps system for predicting customer churn in telecommunications, 
 
 ---
 
+## 🌐 Live Deployments
+
+| Service | URL |
+|---------|-----|
+| 🔌 Prediction API | https://churn-prediction-api-o3zi.onrender.com |
+| 📖 API Docs (Swagger) | https://churn-prediction-api-o3zi.onrender.com/docs |
+| 📡 Streamlit Dashboard | https://churn-prediction-streamlit-vbm6.onrender.com |
+
+---
+
 ## 🏗️ Project Structure
 
 ```
